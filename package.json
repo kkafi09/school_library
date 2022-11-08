@@ -1,0 +1,15 @@
+{
+  "name": "nodejs-sequelize-perpus",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.1",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "md5": "^2.3.0",
+    "mysql2": "^2.3.3",
+    "sequelize": "^6.25.5",
+    "sequelize-cli": "^6.5.2"
+  }
+}
