@@ -1,4 +1,4 @@
-const Member = require("../models/member");
+const Member = require("../models/index").member;
 const response = require("../utils/response");
 const query = require("sequelize").Op;
 
@@ -11,11 +11,13 @@ const getAllMembers = async (req, res) => {
 const findMember = async (req, res) => {
   let { keyword } = req.body;
 
-  let members = await Member.find({
+  let members = await Member.findOne({
     where: {
-      [query.or]: [{ name: { [query.substring]: keyword } }],
-      [query.or]: [{ gender: { [query.substring]: keyword } }],
-      [query.or]: [{ address: { [query.substring]: keyword } }],
+      [query.or]: [
+        { name: { [query.substring]: keyword } },
+        { gender: { [query.substring]: keyword } },
+        { address: { [query.substring]: keyword } },
+      ],
     },
   });
 
@@ -28,9 +30,45 @@ const addMember = async (req, res) => {
 
   Member.create(newMember)
     .then((result) => {
-      return response(200, result, "New member has been inserted");
+      return response(200, result, "New member has been inserted", res);
     })
     .catch((err) => response(400, null, err.message, res));
 };
 
-module.exports = { getAllMembers, findMember, addMember };
+const updateMember = (req, res) => {
+  const { name, address, gender, contact } = req.body;
+
+  let dataMember = { name, address, gender, contact };
+
+  let idMember = req.params.id;
+
+  Member.update(dataMember, { where: { id: idMember } })
+    .then((result) => {
+      // If success update
+      return response(200, result, "Data member has been updated", res);
+    })
+    .catch((error) => {
+      return response(400, null, error.message, res);
+    });
+};
+
+const deleteMember = (req, res) => {
+  let idMember = req.params.id;
+
+  Member.destroy({ where: { id: idMember } }).then((result) => {
+    // if success deleted
+    return response(200, result, "Data member has been updated", res).catch(
+      (error) => {
+        return response(400, null, error.message, res);
+      }
+    );
+  });
+};
+
+module.exports = {
+  getAllMembers,
+  findMember,
+  addMember,
+  deleteMember,
+  updateMember,
+};
